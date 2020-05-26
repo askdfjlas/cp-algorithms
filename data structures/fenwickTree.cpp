@@ -31,6 +31,11 @@ public:
     }
   }
 
+  // Inclusive of endpoints
+  int rangeSum(int left, int right) {
+    return prefixSum(right) - prefixSum(left - 1);
+  }
+
   fenwickTree(vector<int>& arr) {
     size = arr.size();
     tree = new int[size+1];  // +1 for dummy node at 0
