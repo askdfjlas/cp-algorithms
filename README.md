@@ -14,9 +14,9 @@ Algorithms and data structures for competitive programming
 - Segment tree
 - Orientation of 3 points
 - Line intersection
+- Potentially working rolling hash (WIP for strings)
 
 # to-do list
-- Rolling Hash
 - Segment trees with coordinate compression
 - 2D sparse table
 - FFT
