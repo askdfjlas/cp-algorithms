@@ -24,16 +24,17 @@ template <class T> struct PointSegmentTree {
   }
   T get(int i) { return tree[i + size]; }
   T query(int l, int r) {
-    T res;
+    T resl, resr;
     for(l += size, r += size + 1; l < r; l >>= 1, r >>= 1) {
-      if(l & 1) res = res * tree[l++];
-      if(r & 1) res = res * tree[--r];
+      if(l & 1) resl = resl * tree[l++];
+      if(r & 1) resr = tree[--r] * resr;
     }
-    return res;
+    return resl * resr;
   }
   T query_all() { return tree[1]; }
   void consume(int i) { tree[i] = tree[i << 1] * tree[i << 1 | 1]; }
 };
+
 
 struct SegInfo {
   ll v; 
