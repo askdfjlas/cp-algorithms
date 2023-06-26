@@ -31,14 +31,16 @@ template <typename T> struct FenwickTree {
 
 int main() {
   // Testing
-  vector<int> test = {-23, 88, 15, 99, 100, -1000, 2323, -3, 0, 895};
-
+  vector<int> test = {-23, 88, 15, 99, 100, 1000, 2323, 3, 0, 895};
   FenwickTree<int> tree = FenwickTree<int>(test);
   
-  cout << tree.lbound(-23) << ' ' << tree.lbound(-22) << '\n';
-  cout << tree.prefixSum(0) << ' ' << tree.prefixSum(5) << ' ' << tree.prefixSum(8) << '\n';
+  assert(tree.lower_bound(-23) == 0);
+  assert(tree.lower_bound(88) == 3);
+  
+  // Too lazy rn to turn these into asserts :^)
+  cout << tree.prefix_sum(0) << ' ' << tree.prefix_sum(5) << ' ' << tree.prefix_sum(8) << '\n';
   tree.update(0, 100);
-  cout << tree.prefixSum(5) << ' ' << tree.prefixSum(8) << '\n';
+  cout << tree.prefix_sum(5) << ' ' << tree.prefix_sum(8) << '\n';
   tree.update(8, -5235);
-  cout << tree.prefixSum(5) << ' ' << tree.prefixSum(8) << '\n';
+  cout << tree.prefix_sum(5) << ' ' << tree.prefix_sum(8) << '\n';
 }
