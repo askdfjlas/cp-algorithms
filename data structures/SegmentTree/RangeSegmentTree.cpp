@@ -22,11 +22,13 @@ template <class T, class F> struct RangeSegmentTree {
       else _consume(i);
   }
   void set(int i, T val) {
+    i += size;
     _flush_to_leaf(i);
     tree[i] = val;
     _consume_to_root(i);
   }
   T get(int i) {
+    i += size;
     _flush_to_leaf(i);
     return tree[i];
   }
@@ -47,6 +49,7 @@ template <class T, class F> struct RangeSegmentTree {
   }
   T query_all() { return tree[1]; }
   void update(int i, F f) {
+    i += size;
     _flush_to_leaf(i);
     tree[i] = f * tree[i];
     _consume_to_root(i);
@@ -75,7 +78,7 @@ template <class T, class F> struct RangeSegmentTree {
   void _consume(int i) { tree[i] = tree[i << 1] * tree[i << 1 | 1]; }
   void _consume_to_root(int i) { for(i >>= 1; i >= 1; i >>= 1) _consume(i); }
   void _flush(int i) { _apply(i << 1, lazy[i]); _apply(i << 1 | 1, lazy[i]); lazy[i] = F(); }
-  void _flush_to_leaf(int i) { for(int j = log, i = i + size; j >= 1; j--) _flush(i >> j); }
+  void _flush_to_leaf(int i) { for(int j = log; j >= 1; j--) _flush(i >> j); }
 };
 
 const int MOD = 998244353;
