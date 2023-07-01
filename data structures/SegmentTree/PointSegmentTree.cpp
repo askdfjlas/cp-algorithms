@@ -15,15 +15,16 @@ template <class T> struct PointSegmentTree {
     tree = vector<T>(size << 1);
     for(int i = size + arr.size() - 1; i >= 1; i--)
       if(i >= size) tree[i] = arr[i - size];
-      else consume(i);
+      else _consume(i);
   }
   void set(int i, T val) {
     tree[i += size] = val;
     for(i >>= 1; i >= 1; i >>= 1)
-      consume(i); 
+      _consume(i); 
   }
   T get(int i) { return tree[i + size]; }
   T query(int l, int r) {
+    if(l == r - 1) return T();
     T resl, resr;
     for(l += size, r += size + 1; l < r; l >>= 1, r >>= 1) {
       if(l & 1) resl = resl * tree[l++];
@@ -32,16 +33,15 @@ template <class T> struct PointSegmentTree {
     return resl * resr;
   }
   T query_all() { return tree[1]; }
-  void consume(int i) { tree[i] = tree[i << 1] * tree[i << 1 | 1]; }
+  void _consume(int i) { tree[i] = tree[i << 1] * tree[i << 1 | 1]; }
 };
 
-
-struct SegInfo {
-  ll v; 
-  SegInfo() : SegInfo(0) {}
-  SegInfo(ll val) : v(val) {}
-  SegInfo operator*(SegInfo b) {
-    return SegInfo(v + b.v);
+struct SegType {
+  ll a; 
+  SegType() : SegType(0) {}
+  SegType(ll _a) : a(_a) {}
+  SegType operator*(SegType t) {
+    return SegType(a + t.a);
   }
 };
 
@@ -53,14 +53,14 @@ int main() {
 
   int n, q;
   cin >> n >> q;
-  vector<SegInfo> arr(n);
-  FOR(i,n) cin >> arr[i].v;
+  vector<SegType> arr(n);
+  FOR(i,n) cin >> arr[i].a;
 
-  PointSegmentTree<SegInfo> tree(arr);
+  PointSegmentTree<SegType> tree(arr);
   while(q--) {
     int t, a, b;
     cin >> t >> a >> b;
-    if(t == 0) tree.set(a, tree.get(a) * SegInfo(b));
-    else cout << tree.query(a, b - 1).v << '\n';
+    if(t == 0) tree.set(a, tree.get(a) * SegType(b));
+    else cout << tree.query(a, b - 1).a << '\n';
   }
 }
