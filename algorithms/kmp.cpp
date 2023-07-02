@@ -2,40 +2,32 @@
 using namespace std;
 #define FOR(x,n) for(int x=0;x<n;x++)
 
-int* computeLPS(string pat) {
-  int* lps = new int[pat.length()];
-  lps[0] = 0;
-  int len = 0;
-  int i = 1;
-  
-  while(i < pat.length()) {
-    if(pat[len] == pat[i]) {
-      len++;
-      lps[i] = len;
-      i++;
+vector<int> compute_lps(string pat) {
+  int n = pat.length(), j = 0;
+  vector<int> lps(n);
+  for(int i = 1; i < n; i++) {
+    if(pat[i] == pat[j] || j == 0) {
+      if(pat[i] == pat[j]) j++;
+      lps[i] = j;
     }
-    else if(len == 0) {
-      lps[i] = 0;
-      i++;
+    else {
+      j = lps[j - 1];
+      i--;
     }
-    else len = lps[len - 1];
   }
-
   return lps;
 }
 
 vector<int> kmp(string search, string pat) {
-  vector<int> found;
-  int* lps = computeLPS(pat);
+  vector<int> found, lps = compute_lps(pat);
   int i = 0, j = 0;
-  
-  while(i < search.length()) {
+  while(i < (int)search.length()) {
     if(search[i] == pat[j]) {
       i++;
       j++;
-      if(j == pat.length()) {
-	found.push_back(i - j);
-	j = lps[j - 1];
+      if(j == (int)pat.length()) {
+        found.push_back(i - j);
+        j = lps[j - 1];
       }
     }
     else {
@@ -43,7 +35,6 @@ vector<int> kmp(string search, string pat) {
       else i++;
     }
   }
-  
   return found;
 }
 
