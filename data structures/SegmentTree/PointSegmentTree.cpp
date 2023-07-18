@@ -9,7 +9,7 @@ template <class T> struct PointSegmentTree {
   int size = 1;
   vector<T> tree;
   PointSegmentTree(int n) : PointSegmentTree(vector<T>(n)) {}
-  PointSegmentTree(vector<T>& arr) {
+  PointSegmentTree(const vector<T>& arr) {
     while(size < (int)arr.size())
       size <<= 1;
     tree = vector<T>(size << 1);
@@ -22,9 +22,10 @@ template <class T> struct PointSegmentTree {
     for(i >>= 1; i >= 1; i >>= 1)
       _consume(i); 
   }
+  void update(int i, T val) { set(i, tree[i + size] * val); }
   T get(int i) { return tree[i + size]; }
   T query(int l, int r) {
-    if(l == r - 1) return T();
+    if(l == r + 1) return T();
     T resl, resr;
     for(l += size, r += size + 1; l < r; l >>= 1, r >>= 1) {
       if(l & 1) resl = resl * tree[l++];
@@ -60,7 +61,7 @@ int main() {
   while(q--) {
     int t, a, b;
     cin >> t >> a >> b;
-    if(t == 0) tree.set(a, tree.get(a) * SegType(b));
+    if(t == 0) tree.update(a, b);
     else cout << tree.query(a, b - 1).a << '\n';
   }
 }

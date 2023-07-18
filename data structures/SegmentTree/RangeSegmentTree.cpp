@@ -10,7 +10,7 @@ template <class T, class F> struct RangeSegmentTree {
   vector<T> tree;
   vector<F> lazy;
   RangeSegmentTree(int n) : RangeSegmentTree(vector<T>(n)) {}
-  RangeSegmentTree(vector<T>& arr) {
+  RangeSegmentTree(const vector<T>& arr) {
     while(size < (int)arr.size()) {
       size <<= 1;
       log++;
