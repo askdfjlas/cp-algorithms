@@ -10,7 +10,7 @@ struct Aho {
     vector<int> ch;
     int par, idx, dep, id = -1, suf_link = 0, out_link = 0;
     Vertex() : Vertex(-1, -1, 0) {}
-    Vertex(int _par, int _idx, int _dep) : par(_par), idx(_idx), dep(_dep) {
+    Vertex(int par, int idx, int dep) : par(par), idx(idx), dep(dep) {
       ch = vector<int>(26);
     }
   };
