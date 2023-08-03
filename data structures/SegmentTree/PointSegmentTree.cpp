@@ -6,10 +6,10 @@ using ll = long long;
 using ii = pair<int,int>;
 
 template <class T> struct PointSegmentTree {
-  int size = 1;
+  int size = 1, n;
   vector<T> tree;
   PointSegmentTree(int n) : PointSegmentTree(vector<T>(n)) {}
-  PointSegmentTree(const vector<T>& arr) {
+  PointSegmentTree(const vector<T>& arr) : n((int)arr.size()) {
     while(size < (int)arr.size())
       size <<= 1;
     tree = vector<T>(size << 1);
@@ -34,6 +34,28 @@ template <class T> struct PointSegmentTree {
     return resl * resr;
   }
   T query_all() { return tree[1]; }
+  int first_true(int l, function<bool(T)> f) {
+    if(l == n) return n;
+    assert(!f(T()));
+    l += size;
+    T sm;
+    do {
+      while(!(l & 1)) l >>= 1;
+      if(f(sm * tree[l])) {
+        while(l < size) {
+          l <<= 1;
+          if(!f(sm * tree[l])) {
+            sm = sm * tree[l];
+            l++;
+          }
+        }
+        return l - size;
+      }
+      sm = sm * tree[l];
+      l++;
+    } while((l & -l) != l); 
+    return n;
+  }
   void _consume(int i) { tree[i] = tree[i << 1] * tree[i << 1 | 1]; }
 };
 

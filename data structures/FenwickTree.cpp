@@ -8,7 +8,7 @@ template <typename T> struct FenwickTree {
     tree.resize(size + 1);
     while((high_bit << 1) <= size) high_bit <<= 1;
   }
-  FenwickTree(vector<T>& arr) : FenwickTree(arr.size()) {
+  FenwickTree(const vector<T>& arr) : FenwickTree(arr.size()) {
     for(int i = 0; i < size; i++) update(i, arr[i]); 
   }
   int lower_bound(T x) {
@@ -27,6 +27,7 @@ template <typename T> struct FenwickTree {
   }
   T range_sum(int l, int r) { return (l > r) ? 0 : prefix_sum(r) - prefix_sum(l - 1); }
   void update(int i, T delta) { for(i++; i <= size; i += (i & -i)) tree[i] += delta; }
+  void set(int i, T x) { update(i, x - range_sum(i, i)); }
 };
 
 int main() {
