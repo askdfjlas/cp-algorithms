@@ -12,7 +12,7 @@ struct Bitset {
   int n;
   vector<ull> a;
   Bitset(int n) : n(n) { a.resize((n + BLOCKSZ - 1)/BLOCKSZ); }
-  void set(int p, int v) {
+  void set(int p, bool v) {
     ull b = (1ull << (p - BLOCKSZ * (p/BLOCKSZ)));
     v ? a[p/BLOCKSZ] |= b : a[p/BLOCKSZ] &= ~b;
   }
@@ -32,6 +32,12 @@ struct Bitset {
   }
   int size() { return n; }
   bool operator[](int p) { return a[p/BLOCKSZ] & (1ull << (p - BLOCKSZ * (p/BLOCKSZ))); }
+  bool operator==(const Bitset& other) {
+    if(n != other.n) return false;
+    FOR(i,(int)a.size()) if(a[i] != other.a[i]) return false;
+    return true;
+  }
+  bool operator!=(const Bitset& other) { return !operator==(other); }
   Bitset& operator<<=(int x) {
     int sz = (int)a.size(), sh = x/BLOCKSZ, xtra = x - sh * BLOCKSZ, rem = BLOCKSZ - xtra;
     if(!xtra) FOR(i,sz-sh) a[i] = a[i + sh] >> xtra; 
@@ -57,6 +63,14 @@ struct Bitset {
   Bitset& operator&=(const Bitset& other) { FOR(i,(int)a.size()) a[i] &= other.a[i]; return *this; }
   Bitset& operator|=(const Bitset& other) { FOR(i,(int)a.size()) a[i] |= other.a[i]; return *this; }
   Bitset& operator^=(const Bitset& other) { FOR(i,(int)a.size()) a[i] ^= other.a[i]; return *this; }
+  Bitset operator~() {
+    int sz = (int)a.size();
+    Bitset ret(*this);
+    FOR(i,sz) ret.a[i] = ~ret.a[i];
+    ret.a[sz - 1] <<= (sz * BLOCKSZ - n);
+    ret.a[sz - 1] >>= (sz * BLOCKSZ - n);
+    return ret;
+  }
   Bitset operator&(const Bitset& other) { return (Bitset(*this) &= other); }
   Bitset operator|(const Bitset& other) { return (Bitset(*this) |= other); }
   Bitset operator^(const Bitset& other) { return (Bitset(*this) ^= other); }
@@ -69,7 +83,7 @@ int main() {
   cin.tie(NULL);
   mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
   
-  const int BSZ = 4096;
+  const int BSZ = 8293;
   bitset<BSZ> bs1, bs2;
   Bitset tbs1(BSZ), tbs2(BSZ);
   FOR(i,1000) {
@@ -115,12 +129,26 @@ int main() {
       bs2 = bs2 ^ bs1;
       tbs2 = tbs1 ^ tbs2;
     }
+    if(rng() % 3 == 0) {
+      bs1 = ~bs1;
+      tbs1 = ~tbs1;
+    }
+    if(rng() % 3 == 0) {
+      bs2 = ~bs1;
+      tbs2 = ~tbs1;
+    }
     
     string s1 = bs1.to_string(), s2 = bs2.to_string();
     string t1 = tbs1.to_string(), t2 = tbs2.to_string();
     reverse(s1.begin(), s1.end());
     reverse(s2.begin(), s2.end());
     assert(s1 == t1 && s2 == t2);
+    
+    auto cpy = Bitset(tbs1);
+    assert(tbs1 == cpy);
+    cpy.flip(rng() % BSZ);
+    assert(tbs1 != cpy);
+    
     assert((int)bs1.count() == tbs1.count());
     assert((int)bs2.count() == tbs2.count());
   }
