@@ -2,66 +2,59 @@
 using namespace std;
 
 #define FOR(x,n) for(int x=0;x<n;x++)
-#define PI 3.14159265358979323846264338327950288
 typedef long long ll;
 typedef pair<int,int> ii;
 
-void scc(vector<vector<int>>& g, int* idx) {
-  int n = g.size(), ct = 0; 
-  int out[n];
-  vector<int> ginv[n];
-  memset(out, -1, sizeof out);
-  memset(idx, -1, n * sizeof(int));
+/*
+  0 <= ret[i] < n
+  ret[i] == ret[j] <=> i and j in same SCC
+  ret[i] < ret[j] <=> i's SCC occurs before j's in toposort
+*/
+vector<int> scc(int n, vector<ii>& edges) {
+  vector<int> g[n], ginv[n];
+  vector<int> out, ret(n);
+  for(auto [u, v] : edges) {
+    g[u].push_back(v);
+    ginv[v].push_back(u);
+  }
   function<void(int)> dfs = [&](int cur) {
-    out[cur] = INT_MAX;
+    ret[cur] = -1;
     for(int v : g[cur]) {
-      ginv[v].push_back(cur);
-      if(out[v] == -1) dfs(v);
+      if(ret[v]) continue;
+      dfs(v);
     }
-    ct++; out[cur] = ct;
+    out.push_back(cur);
   };
-  vector<int> order;
-  for(int i = 0; i < n; i++) {
-    order.push_back(i);
-    if(out[i] == -1) dfs(i);
-  }
-  sort(order.begin(), order.end(), [&](int& u, int& v) {
-    return out[u] > out[v];
-  });
-  ct = 0;
-  stack<int> s;
-  auto dfs2 = [&](int start) {
-    s.push(start);
-    while(!s.empty()) {
-      int cur = s.top();
-      s.pop();
-      idx[cur] = ct;
-      for(int v : ginv[cur])
-        if(idx[v] == -1) s.push(v);
+  function<void(int,int)> dfs2 = [&](int cur, int t) {
+    ret[cur] = t;
+    for(int v : ginv[cur]) {
+      if(ret[v] != -1) continue;
+      dfs2(v, t);
     }
   };
-  for(int v : order) {
-    if(idx[v] == -1) {
-      dfs2(v);
-      ct++;
-    }
+  FOR(i,n) if(!ret[i]) dfs(i);
+  int t = 0;
+  for(int i = n - 1; i >= 0; i--) {
+    if(ret[out[i]] != -1) continue;
+    dfs2(out[i], t);
+    t++;
   }
+  return ret;
 }
 
 // 0 => impossible, 1 => possible
 pair<int,vector<int>> sat2(int n, vector<pair<int,int>>& clauses) {
   vector<int> ans(n);
-  vector<vector<int>> g(2*n + 1);
+  vector<ii> edges;
   for(auto [x, y] : clauses) {
     x = x < 0 ? -x + n : x;
     y = y < 0 ? -y + n : y;
     int nx = x <= n ? x + n : x - n;
     int ny = y <= n ? y + n : y - n;
-    g[nx].push_back(y);
-    g[ny].push_back(x);
+    edges.push_back({nx, y});
+    edges.push_back({ny, x});
   }
-  int idx[2*n + 1];
-  scc(g, idx);
+  vector<int> idx = scc(2*n + 1, edges);
   for(int i = 1; i <= n; i++) {
     if(idx[i] == idx[i + n]) return {0, {}};
     ans[i - 1] = idx[i + n] < idx[i];
