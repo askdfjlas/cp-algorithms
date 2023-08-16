@@ -10,7 +10,7 @@ typedef pair<int,int> ii;
   ret[i] == ret[j] <=> i and j in same SCC
   ret[i] < ret[j] <=> i's SCC occurs before j's in toposort
 */
-vector<int> scc(int n, vector<ii>& edges) {
+vector<int> kosaraju(int n, vector<ii>& edges) {
   vector<int> g[n], ginv[n];
   vector<int> out, ret(n);
   for(auto [u, v] : edges) {
@@ -54,7 +54,7 @@ pair<int,vector<int>> sat2(int n, vector<pair<int,int>>& clauses) {
     edges.push_back({nx, y});
     edges.push_back({ny, x});
   }
-  vector<int> idx = scc(2*n + 1, edges);
+  vector<int> idx = kosaraju(2*n + 1, edges);
   for(int i = 1; i <= n; i++) {
     if(idx[i] == idx[i + n]) return {0, {}};
     ans[i - 1] = idx[i + n] < idx[i];

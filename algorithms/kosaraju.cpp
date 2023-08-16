@@ -3,7 +3,7 @@
   ret[i] == ret[j] <=> i and j in same SCC
   ret[i] < ret[j] <=> i's SCC occurs before j's in toposort
 */
-vector<int> scc(int n, vector<ii>& edges) {
+vector<int> kosaraju(int n, vector<ii>& edges) {
   vector<int> g[n], ginv[n];
   vector<int> out, ret(n);
   for(auto [u, v] : edges) {
