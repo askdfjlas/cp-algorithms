@@ -6,9 +6,8 @@ using namespace std;
 using ll = long long;
 using ii = pair<int,int>;
 
-const int MX = 1e5 + 10;
-int minp[MX];
-vector<int> primes;
+const int MX = 1e7 + 10;
+vector<int> primes, minp(MX);
 
 void lin_sieve() {
   FORR(i,2,MX-1) {
