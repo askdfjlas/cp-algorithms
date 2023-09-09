@@ -68,7 +68,7 @@ struct KthAncestor {
   }
 };
 
-// https://judge.yosupo.jp/problem/lca (try again someday when judge is back up)
+// https://judge.yosupo.jp/problem/lca
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
